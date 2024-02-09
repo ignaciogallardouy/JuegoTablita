@@ -16,31 +16,34 @@ app.get('/', (req, res) => {
 const players = {};
 
 io.on('connection', (socket) => {
-  console.log('Un usuario se ha conectado');
+  socket.emit('nuevo jugador', { id: socket.id });
   players[socket.id] = {
+    id: socket.id,
     x: 100,
-    y:50,
+    y: 50,
     img: (__dirname, 'client', 'images/platform.png')
   }
-  console.log(players);
+  //console.log(players);
 
   io.emit('updatePlayers', players);
 
   socket.on('disconnect', () => {
     console.log('Usuario desconectado');
+    
+    // var count = 0;
+    // for (player of players) {
+    //   if (players.id == socket.id) {
+    //     players.splice(count, 1);
+    //     break;
+    //   }
+    //   count += 1;
+    // }
   });
 
   socket.on("JugMovimiento", (socket) => {
     io.emit('movimiento', socket);
   });
 
-  // socket.on("AddNewBall", (newuser) => {
-  //   io.emit('newBall',newuser);
-  // });
-
-  // socket.on('enviar mensaje', (msg) => {
-  //   io.emit('recibir mensaje', msg);
-  // });
 });
 
 const PORT = process.env.PORT || 3000;
